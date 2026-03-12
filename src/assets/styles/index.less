@@ -1,0 +1,42 @@
+@import url(./classes.less);
+@import url(./reset.less);
+:root {
+  font-family: system-ui, Avenir, Helvetica, Arial, sans-serif;
+  line-height: 1.5;
+  font-weight: 400;
+
+  font-synthesis: none;
+  text-rendering: optimizeLegibility;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+  background-color: var(--color-background);
+  color: var(--color-text-base);
+
+  color-scheme: light dark;
+  @darkBackground: #000000;
+  @darkTextBase: #ffffff;
+  @lightBackground: #f5f5f5;
+  @lightTextBase: #3d495d;
+  &[theme-light] {
+    --color-background: @lightBackground;
+    --color-text-base: @lightTextBase;
+  }
+
+  &[theme-dark] {
+    --color-background: @darkBackground;
+    --color-text-base: @darkTextBase;
+  }
+
+  @media (prefers-color-scheme: light) {
+    &:not([theme-dark]) {
+      --color-background: @lightBackground;
+      --color-text-base: @lightTextBase;
+    }
+  }
+  @media (prefers-color-scheme: dark) {
+    &:not([theme-light]) {
+      --color-background: @darkBackground;
+      --color-text-base: @darkTextBase;
+    }
+  }
+}

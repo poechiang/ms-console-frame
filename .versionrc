@@ -1,0 +1,43 @@
+{
+  "types": [
+    {
+      "type": "feat",
+      "section": "✨ Features | 新功能"
+    },
+    {
+      "type": "fix",
+      "section": "🐛 Bug Fixes | Bug 修复"
+    },
+    {
+      "type": "perf",
+      "section": "⚡ Performance | 性能优化",
+      "hidden": false
+    },
+    {
+      "type": "chore",
+      "section": "🔧 Others | 其他",
+      "hidden": false
+    },
+    {
+      "type": "init",
+      "section": "⚡ Initialize | 初始化",
+      "hidden": false
+    },
+    {
+      "type": "docs",
+      "hidden": true
+    },
+    {
+      "type": "style",
+      "hidden": true
+    },
+    {
+      "type": "refactor",
+      "hidden": true
+    },
+    {
+      "type": "test",
+      "hidden": true
+    }
+  ]
+}

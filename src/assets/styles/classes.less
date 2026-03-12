@@ -1,0 +1,22 @@
+.flexable {
+  display: flex;
+  &.--column {
+    flex-direction: column;
+  }
+  @justifyContents: center, start, end, space-between, space-around, space-evenly;
+  each(@justifyContents,{
+    &.--main-@{value} {
+      justify-content: @value;
+    }
+  });
+  @alighnItems: center, start, end, stretch, baseline;
+  each(@alighnItems,{
+    &.--cross-@{value} {
+      align-items: @value;
+    }
+  });
+
+  .flex-auto {
+    flex: auto;
+  }
+}
