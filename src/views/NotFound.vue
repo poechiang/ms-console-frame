@@ -2,6 +2,6 @@
 import { Result } from 'ant-design-vue';
 </script>
 <template>
-  <Result status="404" title="404" subTitle="页面不存在" />
+  <Result status="404" title="404" :subTitle="$t('common.pageStatus.404')" />
 </template>
 <style lang="less" scoped></style>

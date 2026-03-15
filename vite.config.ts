@@ -37,7 +37,4 @@ export default defineConfig({
       { find: '@', replacement: path.resolve(__dirname, 'src') },
     ],
   },
-  define: {
-    __IS_MFE__: 'window.__IS_MFE__ ?? false',
-  },
 });
