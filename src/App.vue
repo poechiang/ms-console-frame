@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { useTheme } from '@/hooks/useTheme';
+import { useTheme } from '@hooks/useTheme';
 import { ConfigProvider } from 'ant-design-vue';
 import { inject } from 'vue';
 
@@ -15,17 +15,13 @@ const { algorithm } = useTheme();
     }"
   >
     <RouterView />
-    <footer>
-      <p>macro-service-sub@0.0.0</p>
-      <p>macro-service-frame@0.0.0</p>
-      <p>macro-service-base@0.0.0</p>
-    </footer>
+    <footer>ms-sub@0.0.0 | ms-frame@0.0.0 | ms-base@0.0.0</footer>
   </ConfigProvider>
 </template>
 <style lang="less" scoped>
 footer {
   position: fixed;
-  right: 0;
+  inset-inline-end: 0;
   bottom: 0;
   color: gray;
   pointer-events: none;

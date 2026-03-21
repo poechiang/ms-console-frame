@@ -1,0 +1,7 @@
+export default {
+  common: {
+    pageStatus: {
+      404: '页面不存在',
+    },
+  },
+};

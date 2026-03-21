@@ -1,25 +1,25 @@
 import FrameAside from '@components/FrameAside.vue';
 import FrameHeader from '@components/FrameHeader.vue';
-import { createApp, ref } from 'vue';
+import type { FrameAsideInjection } from '@shared/types';
+import { createApp, reactive, ref } from 'vue';
 import App from './App.vue';
+import i18n from './assets/i18n';
 import { getService } from './core/services';
 import router from './routes';
 import './style.less';
-
-let headerAppRef: ReturnType<typeof createApp> | null = null;
-let asideAppRef: ReturnType<typeof createApp> | null = null;
-
 /**
  * 挂载函数：供基座调用
  * @param container  基座提供的挂载容器选择器
  */
-const createAppCore = (C: Parameters<typeof createApp>[0]) => {
+const createAppCore = (C: Parameters<typeof createApp>[0], props?: any) => {
   try {
     let app: ReturnType<typeof createApp> | null = null;
     app = createApp(C);
-    app.provide('standalone', !window.__IS_MFE__);
+    app.provide('standalone', !window.__FRAME_IN_MFE__);
     const colorPrimary = ref('#41b883');
     app.provide('colorPrimary', colorPrimary);
+    app.provide('props', props);
+    app.use(i18n);
 
     return app;
   } catch (error) {
@@ -29,10 +29,16 @@ const createAppCore = (C: Parameters<typeof createApp>[0]) => {
 };
 
 const mount = (app: ReturnType<typeof createApp>, container: string | HTMLElement) => {
-  const wrapper = typeof container === 'string' ? document.querySelector(container) : container;
+  let wrapper;
+  if (typeof container === 'string') {
+    wrapper = document.querySelector(container) ?? document.createElement(container);
+    document.body.prepend(wrapper);
+  } else {
+    wrapper = container;
+  }
   if (wrapper) {
     app.mount(wrapper);
-    console.info(`[${app._component.__name}] ${__IS_MFE__ ? '[MFE]' : ''} mounted in ${app._container?.tagName} successfully`);
+    console.info(`[${app._component.__name}] ${window.__FRAME_IN_MFE__ ? '[MFE]' : ''} mounted in ${app._container?.tagName} successfully`);
   }
 };
 
@@ -43,35 +49,42 @@ const unmount = (app: ReturnType<typeof createApp>) => {
   console.info(`[${app._component.__name}] unmounted successfully`);
 };
 
-export const header = {
-  mount: (container: string | HTMLElement, title?: string) => {
-    headerAppRef = createAppCore(FrameHeader);
-    headerAppRef?.provide('title', title);
-    mount(headerAppRef!, container);
-  },
-  unmount: () => headerAppRef && unmount(headerAppRef),
-};
-export const aside = {
-  mount: (container: string | HTMLElement, title?: string) => {
-    asideAppRef = createAppCore(FrameAside);
-    if (asideAppRef) {
-      asideAppRef.provide('title', title);
-      mount(asideAppRef, container);
-    }
-  },
-  unmount: () => asideAppRef && unmount(asideAppRef),
-};
-
 window.getConsoleService = (name: ServiceKey) => getService(name);
 
-if (!__IS_MFE__) {
-  header.mount('frame-header', 'Console X');
-  aside.mount('frame-aside');
+const headerProps = reactive({ title: 'Console X' });
+const headerAppRef: ReturnType<typeof createApp> | null = createAppCore(FrameHeader, headerProps);
+if (headerAppRef) {
+  mount(headerAppRef, 'frame-header');
+}
 
+export { i18n };
+export const header = {
+  unmount: () => headerAppRef && unmount(headerAppRef),
+  get props() {
+    return headerProps;
+  },
+};
+
+const asideProps = reactive<FrameAsideInjection>({ items: [] });
+const asideAppRef: ReturnType<typeof createApp> | null = createAppCore(FrameAside, asideProps);
+if (asideAppRef) {
+  mount(asideAppRef, 'frame-aside');
+}
+
+export const aside = {
+  unmount: () => asideAppRef && unmount(asideAppRef),
+  get props() {
+    return asideProps;
+  },
+};
+
+export * from '@hooks/useNavigator';
+if (!window.__FRAME_IN_MFE__) {
   const app = createAppCore(App);
   if (app) {
     app.use(router);
     mount(app, '#app');
   }
+
   console.info(`App mounted in div#app successfully`);
 }

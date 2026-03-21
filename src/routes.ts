@@ -9,17 +9,11 @@ const routes: RouteRecordRaw[] = [
     path: '/overview',
     name: 'Overview',
     component: () => import('@views/Overview.vue'),
-    meta: {
-      menuKey: 'overview',
-    },
   },
   {
     path: '/about',
     name: 'About',
     component: () => import('@views/About.vue'),
-    meta: {
-      menuKey: 'about',
-    },
   },
   {
     path: '/:pathMatch(.*)*',
@@ -35,7 +29,7 @@ const router = createRouter({
 });
 
 router.beforeEach(to => {
-  document.title = `${to.meta.title ?? '404'} - 我的应用`;
+  document.title = `${to.meta.title ?? to.meta.menuLabel ?? 'Not Found'} - 我的应用`;
   const token = localStorage.getItem('token');
   if (to.meta.requiresAuth && !token) {
     return '/sign-in';
@@ -47,7 +41,7 @@ router.beforeEach(to => {
 router.afterEach((to, _, err) => {
   if (!err) {
     const [_, setSelectedKeys] = useNavigator();
-    const key = (to.meta?.menuKey ?? to.params.pathMatch?.[0] ?? to.name) as string;
+    const key = to.name as string;
     if (key) {
       setSelectedKeys(key);
     }

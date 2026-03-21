@@ -5,19 +5,16 @@
 :not(p, ul) {
   margin: 0;
 }
-body {
-  margin: 48px 0 0 256px;
-}
+:root {
+  body {
+    margin: 0;
+    margin-block-start: 48px;
+    margin-inline-start: 256px;
+  }
 
-frame-header {
-  position: fixed;
-  top: 0;
-  left: 0;
-  right: 0;
-  z-index: 1001;
-}
-frame-aside {
-  position: fixed;
-  left: 0;
-  top: 72px;
+  &[no-aside] {
+    body {
+      margin-inline-start: 0;
+    }
+  }
 }

@@ -3,13 +3,14 @@
   "compilerOptions": {
     "baseUrl": ".",
     "paths": {
-      "@/*": ["src/*"],
       "@assets/*": ["src/assets/*"],
       "@components/*": ["src/components/*"],
       "@hooks/*": ["src/hooks/*"],
       "@core/*": ["src/core/*"],
       "@utils/*": ["src/utils/*"],
-      "@views/*": ["src/views/*"]
+      "@views/*": ["src/views/*"],
+
+      "@shared/types": ["./src/shared-types/index.ts"]
     },
     "tsBuildInfoFile": "./node_modules/.tmp/tsconfig.app.tsbuildinfo",
     "types": ["vite/client"],
