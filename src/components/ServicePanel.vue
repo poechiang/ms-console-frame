@@ -1,12 +1,10 @@
 <script setup lang="ts">
 import { FilterOutlined, SortAscendingOutlined } from '@ant-design/icons-vue';
-import type { FrameHeaderInjection } from '@shared/types';
+import { useHeaderStore } from '@store';
 import { Avatar, Button, Drawer, Empty, InputSearch, List, ListItemMeta } from 'ant-design-vue';
-import { inject } from 'vue';
-
-const props = inject<FrameHeaderInjection>('props', { services: [] });
 
 defineModel('open', { default: false });
+const store = useHeaderStore();
 </script>
 
 <template>
@@ -20,7 +18,7 @@ defineModel('open', { default: false });
     </header>
 
     <article>
-      <List item-layout="horizontal" :data-source="props.services">
+      <List item-layout="horizontal" :data-source="store.services">
         <template #renderItem="{ item }">
           <ListItemMeta :description="item.description">
             <template #title>

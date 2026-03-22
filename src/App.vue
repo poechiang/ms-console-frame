@@ -1,19 +1,17 @@
 <script setup lang="ts">
-import { useTheme } from '@hooks/useTheme';
+import { useEnvStore } from '@store';
 import { ConfigProvider } from 'ant-design-vue';
-import { inject } from 'vue';
+import { computed } from 'vue';
 
-const colorPrimary = inject('colorPrimary', '#41b883');
-const { algorithm } = useTheme();
+const env = useEnvStore();
+const theme = computed(() => ({
+  token: { colorPrimary: env.coloring, colorLink: env.coloring },
+  algorithm: env.algorithm,
+}));
 </script>
 
 <template>
-  <ConfigProvider
-    :theme="{
-      token: { colorPrimary: colorPrimary, colorLink: colorPrimary },
-      algorithm,
-    }"
-  >
+  <ConfigProvider :theme="theme">
     <RouterView />
     <footer>ms-sub@0.0.0 | ms-frame@0.0.0 | ms-base@0.0.0</footer>
   </ConfigProvider>

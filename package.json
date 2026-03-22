@@ -11,11 +11,14 @@
   "dependencies": {
     "@ant-design/icons-vue": "^7.0.1",
     "ant-design-vue": "^4.2.6",
+    "pinia": "^3.0.4",
+    "pinia-plugin-persistedstate": "^4.7.1",
     "vue": "^3.5.25",
     "vue-i18n": "^11.3.0",
     "vue-router": "^5.0.3"
   },
   "devDependencies": {
+    "@shared/types": "link:./src/shared-types",
     "@types/node": "^24.10.1",
     "@vitejs/plugin-vue": "^6.0.2",
     "@vue/tsconfig": "^0.8.1",
@@ -23,8 +26,7 @@
     "typescript": "~5.9.3",
     "vite": "^8.0.0-beta.13",
     "vite-svg-loader": "^5.1.1",
-    "vue-tsc": "^3.1.5",
-    "@shared/types": "link:./src/shared-types"
+    "vue-tsc": "^3.1.5"
   },
   "pnpm": {
     "overrides": {

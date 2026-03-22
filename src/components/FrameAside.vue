@@ -1,53 +1,19 @@
 <script setup lang="ts">
-import { useNavigator } from '@hooks/useNavigator';
-import { useTheme } from '@hooks/useTheme';
-import { ConfigProvider, Menu, type ItemType } from 'ant-design-vue';
+import { useAsideStore, useEnvStore } from '@store';
+import { ConfigProvider, Menu } from 'ant-design-vue';
 import type { SelectEventHandler } from 'ant-design-vue/es/menu/src/interface';
 import { computed, inject, watch } from 'vue';
-import { useI18n } from 'vue-i18n';
 import router from '../routes';
+import SubMenu from './SubMenu.vue';
 
-const props = inject<{ items?: ItemType[]; visible?: boolean }>('props', { items: [], visible: true });
 const root = document.documentElement;
 const colorPrimary = inject('colorPrimary', '#41b883');
 
-const [selectedKeys] = useNavigator('overview');
-const { algorithm, currentMode } = useTheme();
-const { t } = useI18n();
-const menuList = computed(() => {
-  if (props.items?.length) {
-    return props.items;
-  }
-  if (!window.__FRAME_IN_MFE__) {
-    return [
-      {
-        key: 'Overview',
-        label: t('总览'),
-        onClick: () => router.push({ path: '/overview' }),
-      },
-      {
-        key: 'Document',
-        label: t('文档'),
-        onClick: () => router.push({ path: '/document' }),
-      },
-      {
-        key: 'About',
-        label: t('关于'),
-        onClick: () => router.push({ path: '/about' }),
-      },
-      {
-        key: 'Help',
-        label: t('帮助'),
-        onClick: () => router.push({ path: '/help' }),
-      },
-    ];
-  } else {
-    return [];
-  }
-});
+const env = useEnvStore();
+const aside = useAsideStore();
 
 watch(
-  () => props.visible !== false && menuList.value.length,
+  () => aside.visible !== false && aside.menuItems.length,
   v => {
     if (v) {
       root.removeAttribute('no-aside');
@@ -57,7 +23,13 @@ watch(
   },
   { immediate: true },
 );
-const handleMenuClick: SelectEventHandler = e => e.item.onClick?.(new MouseEvent('click'));
+
+const selectedKeys = computed(() => (aside.selectedMenuKey?.length ? [aside.selectedMenuKey] : []));
+const handleMenuClick: SelectEventHandler = e => {
+  const item = aside.menuItems.find(x => x.key === e.key);
+  aside.toggleMenuKey(e.key as string);
+  item?.path && router.push(item.path);
+};
 </script>
 
 <template>
@@ -72,19 +44,21 @@ const handleMenuClick: SelectEventHandler = e => e.item.onClick?.(new MouseEvent
           colorItemBgSelected: 'transparent',
         },
       },
-      algorithm,
+      algorithm: env.algorithm,
     }"
   >
     <Menu
-      v-model:selectedKeys="selectedKeys"
       style="width: 256px"
       mode="inline"
+      :selectedKeys="selectedKeys"
+      :selectable="true"
       :multiple="false"
-      :items="menuList"
-      :theme="currentMode"
+      :theme="env.currentTheme"
       @select="handleMenuClick"
-      v-if="props.visible !== false"
-    ></Menu>
+      v-if="aside.visible !== false"
+    >
+      <SubMenu v-for="item in aside.menuItems" :key="item.key" :menuItem="item" />
+    </Menu>
   </ConfigProvider>
 </template>
 <style lang="less" scoped>

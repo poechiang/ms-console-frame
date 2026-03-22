@@ -2,35 +2,43 @@
 import { PoweroffOutlined } from '@ant-design/icons-vue';
 import { antdLocaleData } from '@assets/i18n';
 import ThemeSwitch from '@components/ThemeSwitch.vue';
-import { useTheme } from '@hooks/useTheme';
-import type { FrameHeaderInjection, LocaleKeys } from '@shared/types';
+import type { LocaleKeys } from '@shared/types';
+import { useEnvStore } from '@store';
+import { useHeaderStore } from '@store/header';
 import { Button, ConfigProvider } from 'ant-design-vue';
-import { computed, inject, ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useI18n } from 'vue-i18n';
 import LocaleSwitch from './LocaleSwitch.vue';
 import ServicePanel from './ServicePanel.vue';
 
-const props = inject<FrameHeaderInjection>('props', { title: 'Console X', services: [] });
-
-const standalone = inject('standalone', false);
-const colorPrimary = inject('colorPrimary', '#41b883');
-const { algorithm } = useTheme();
+const env = useEnvStore();
 const { locale } = useI18n();
 const localeData = computed(() => antdLocaleData[locale.value as LocaleKeys]);
 const open = ref(false);
+
+const store = useHeaderStore();
 </script>
 
 <template>
-  <ConfigProvider :theme="{ token: { colorPrimary }, algorithm }" :locale="localeData">
+  <ConfigProvider :theme="{ token: { colorPrimary: env.coloring }, algorithm: env.algorithm }" :locale="localeData">
     <header class="header-wrapper flexable --cross-center">
       <h3 class="web-title" @click="open = !open">
-        {{ props?.title }}
-        <span class="tag" v-if="standalone" :style="{ backgroundColor: colorPrimary }">{{ $t('独立版') }}</span>
+        {{ store.title }}
+        <span class="tag" v-if="env.standalone" :style="{ backgroundColor: env.coloring }">{{ $t('独立版') }}</span>
       </h3>
       <ServicePanel v-model:open="open" />
       <span class="flex-auto"></span>
-      <LocaleSwitch />
 
+      <Button
+        :type="store.selectedMenuKey === item.key ? 'link' : 'text'"
+        size="large"
+        v-for="item in store.menuItems"
+        @click="store.toggleMenuKey(item.key)"
+      >
+        <img :src="item.icon" :alt="item.text" v-if="item.icon" />
+        {{ $t(item.text) }}
+      </Button>
+      <LocaleSwitch />
       <ThemeSwitch />
       <Button type="text" size="large">
         <PoweroffOutlined />

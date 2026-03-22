@@ -1,7 +1,7 @@
 import FrameAside from '@components/FrameAside.vue';
 import FrameHeader from '@components/FrameHeader.vue';
-import type { FrameAsideInjection } from '@shared/types';
-import { createApp, reactive, ref } from 'vue';
+import pinia, { useAsideStore, useHeaderStore } from '@store';
+import { createApp } from 'vue';
 import App from './App.vue';
 import i18n from './assets/i18n';
 import { getService } from './core/services';
@@ -11,15 +11,12 @@ import './style.less';
  * 挂载函数：供基座调用
  * @param container  基座提供的挂载容器选择器
  */
-const createAppCore = (C: Parameters<typeof createApp>[0], props?: any) => {
+const createAppCore = (C: Parameters<typeof createApp>[0]) => {
   try {
     let app: ReturnType<typeof createApp> | null = null;
     app = createApp(C);
-    app.provide('standalone', !window.__FRAME_IN_MFE__);
-    const colorPrimary = ref('#41b883');
-    app.provide('colorPrimary', colorPrimary);
-    app.provide('props', props);
     app.use(i18n);
+    app.use(pinia);
 
     return app;
   } catch (error) {
@@ -51,31 +48,28 @@ const unmount = (app: ReturnType<typeof createApp>) => {
 
 window.getConsoleService = (name: ServiceKey) => getService(name);
 
-const headerProps = reactive({ title: 'Console X' });
-const headerAppRef: ReturnType<typeof createApp> | null = createAppCore(FrameHeader, headerProps);
+const headerAppRef: ReturnType<typeof createApp> | null = createAppCore(FrameHeader);
 if (headerAppRef) {
   mount(headerAppRef, 'frame-header');
 }
 
 export { i18n };
+
+const headerStore = useHeaderStore(pinia);
 export const header = {
   unmount: () => headerAppRef && unmount(headerAppRef),
-  get props() {
-    return headerProps;
-  },
+  store: headerStore,
 };
 
-const asideProps = reactive<FrameAsideInjection>({ items: [] });
-const asideAppRef: ReturnType<typeof createApp> | null = createAppCore(FrameAside, asideProps);
+const asideAppRef: ReturnType<typeof createApp> | null = createAppCore(FrameAside);
 if (asideAppRef) {
   mount(asideAppRef, 'frame-aside');
 }
 
+const asideStore = useAsideStore(pinia);
 export const aside = {
   unmount: () => asideAppRef && unmount(asideAppRef),
-  get props() {
-    return asideProps;
-  },
+  store: asideStore,
 };
 
 export * from '@hooks/useNavigator';
