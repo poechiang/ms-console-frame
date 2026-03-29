@@ -9,6 +9,8 @@
       "@core/*": ["src/core/*"],
       "@utils/*": ["src/utils/*"],
       "@views/*": ["src/views/*"],
+      "@store": ["src/store/index.ts"],
+      "@store/*": ["src/store/*"],
 
       "@shared/types": ["./src/shared-types/index.ts"]
     },

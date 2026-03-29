@@ -1,5 +1,4 @@
 import { createRouter, createWebHistory, type RouteRecordRaw } from 'vue-router';
-import { useNavigator } from './hooks/useNavigator';
 const routes: RouteRecordRaw[] = [
   {
     path: '',
@@ -35,16 +34,6 @@ router.beforeEach(to => {
     return '/sign-in';
   } else {
     return true;
-  }
-});
-
-router.afterEach((to, _, err) => {
-  if (!err) {
-    const [_, setSelectedKeys] = useNavigator();
-    const key = to.name as string;
-    if (key) {
-      setSelectedKeys(key);
-    }
   }
 });
 

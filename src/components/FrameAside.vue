@@ -1,53 +1,49 @@
 <script setup lang="ts">
-import { useNavigator } from '@hooks/useNavigator';
-import { useTheme } from '@hooks/useTheme';
-import { ConfigProvider, Menu, type ItemType } from 'ant-design-vue';
+import { useAsideStore, useEnvStore } from '@store';
+import { ConfigProvider, Menu } from 'ant-design-vue';
 import type { SelectEventHandler } from 'ant-design-vue/es/menu/src/interface';
 import { computed, inject, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
 import router from '../routes';
+import SubMenu from './SubMenu.vue';
 
-const props = inject<{ items?: ItemType[]; visible?: boolean }>('props', { items: [], visible: true });
 const root = document.documentElement;
 const colorPrimary = inject('colorPrimary', '#41b883');
-
-const [selectedKeys] = useNavigator('overview');
-const { algorithm, currentMode } = useTheme();
 const { t } = useI18n();
+const env = useEnvStore();
+const aside = useAsideStore();
+
+const selectedKeys = computed(() => (aside.selectedMenuKey?.length ? [aside.selectedMenuKey] : []));
 const menuList = computed(() => {
-  if (props.items?.length) {
-    return props.items;
-  }
-  if (!window.__FRAME_IN_MFE__) {
+  if (env.isMfe) {
+    return aside.menuItems;
+  } else {
     return [
       {
         key: 'Overview',
         label: t('总览'),
-        onClick: () => router.push({ path: '/overview' }),
+        path: '/overview',
       },
       {
         key: 'Document',
         label: t('文档'),
-        onClick: () => router.push({ path: '/document' }),
+        path: '/document',
       },
       {
         key: 'About',
         label: t('关于'),
-        onClick: () => router.push({ path: '/about' }),
+        path: '/about',
       },
       {
         key: 'Help',
         label: t('帮助'),
-        onClick: () => router.push({ path: '/help' }),
+        path: '/help',
       },
     ];
-  } else {
-    return [];
   }
 });
-
 watch(
-  () => props.visible !== false && menuList.value.length,
+  () => aside.visible !== false && menuList.value.length,
   v => {
     if (v) {
       root.removeAttribute('no-aside');
@@ -57,7 +53,15 @@ watch(
   },
   { immediate: true },
 );
-const handleMenuClick: SelectEventHandler = e => e.item.onClick?.(new MouseEvent('click'));
+const handleMenuClick: SelectEventHandler = e => {
+  const item = menuList.value.find(x => x.key === e.key);
+  aside.selectedMenuKey = item?.key!;
+  if (item?.onClick) {
+    item?.onClick(item);
+  } else if (item?.path) {
+    router.push(item.path);
+  }
+};
 </script>
 
 <template>
@@ -72,23 +76,26 @@ const handleMenuClick: SelectEventHandler = e => e.item.onClick?.(new MouseEvent
           colorItemBgSelected: 'transparent',
         },
       },
-      algorithm,
+      algorithm: env.algorithm,
     }"
+    :prefixCls="'cf'"
   >
     <Menu
-      v-model:selectedKeys="selectedKeys"
       style="width: 256px"
       mode="inline"
+      :selectedKeys="selectedKeys"
+      :selectable="true"
       :multiple="false"
-      :items="menuList"
-      :theme="currentMode"
+      :theme="env.currentTheme"
       @select="handleMenuClick"
-      v-if="props.visible !== false"
-    ></Menu>
+      v-if="aside.visible !== false"
+    >
+      <SubMenu v-for="item in menuList" :key="item.key" :menuItem="item" />
+    </Menu>
   </ConfigProvider>
 </template>
 <style lang="less" scoped>
-.ant-menu {
+.cf-menu {
   position: fixed;
   inset-inline-start: 0;
   top: 72px;

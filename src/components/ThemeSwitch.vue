@@ -1,84 +1,62 @@
 <script setup lang="ts">
-import { Button, ConfigProvider, theme } from 'ant-design-vue';
-import { computed } from 'vue';
 import LockIcon from '@assets/icons/lock.svg';
 import UnLockIcon from '@assets/icons/unlock.svg';
-import { useTheme } from '@hooks/useTheme';
+import { useEnvStore } from '@store';
+import { Button, theme } from 'ant-design-vue';
+import { computed } from 'vue';
+
 withDefaults(defineProps<{ size?: number }>(), {
   size: 26,
 });
-
-const { followSystem, algorithm, setThemeMode } = useTheme();
+const env = useEnvStore();
 const { token } = theme.useToken();
 const checked = computed(() => {
-  return algorithm.value === theme.darkAlgorithm;
+  return env.algorithm === theme.darkAlgorithm;
 });
 </script>
 
 <template>
   <span class="theme-switch-wrapper">
-    <ConfigProvider
-      :theme="{
-        components: {
-          Button: {
-            padding: 2.5,
-            colorBorder: 'transparent',
-            colorBgContainer: token.colorPrimaryBgHover,
-          },
-        },
-        algorithm: algorithm,
+    <Button
+      shape="circle"
+      size="small"
+      @click="env.themeMode = env.followSystem ? (checked ? 'dark' : 'light') : 'auto'"
+      :style="{
+        width: `${size}px`,
+        height: `${size}px`,
+        borderColor: 'transparent',
+        backgroundColor: token.colorPrimaryBgHover,
       }"
     >
-      <Button
-        shape="circle"
-        size="small"
-        @click="setThemeMode(followSystem ? (checked ? 'dark' : 'light') : 'auto')"
-        :style="{
-          padding: '2.5px',
-          width: `${size}px`,
-          height: `${size}px`,
-        }"
-      >
-        <LockIcon :style="{ color: token.colorPrimary }" v-if="followSystem" />
-        <UnLockIcon :style="{ color: token.colorPrimary }" v-if="!followSystem" />
-      </Button>
-    </ConfigProvider>
-    <ConfigProvider
-      :theme="{
-        components: {
-          Button: {
-            padding: 0,
-            colorBorder: 'transparent',
-            colorBgContainer: token.colorPrimaryBgHover,
-          },
-        },
-        algorithm: algorithm,
+      <LockIcon :style="{ color: token.colorPrimary }" v-if="env.followSystem" />
+      <UnLockIcon :style="{ color: token.colorPrimary }" v-if="!env.followSystem" />
+    </Button>
+    <!-- <Dropdown :style="{ lineHeight: 0 }"> -->
+    <Button
+      class="theme-switch-host"
+      shape="round"
+      :disabled="env.followSystem"
+      @click="env.themeMode = checked ? 'light' : 'dark'"
+      :style="{
+        width: `${size * 2}px`,
+        height: `${size}px`,
+        borderColor: 'transparent',
+        backgroundColor: token.colorPrimaryBgHover,
       }"
     >
-      <!-- <Dropdown :style="{ lineHeight: 0 }"> -->
-      <Button
-        class="theme-switch-host"
-        shape="round"
-        :disabled="followSystem"
-        @click="setThemeMode(checked ? 'light' : 'dark')"
+      <span
+        class="bullet"
         :style="{
-          width: `${size * 2}px`,
-          height: `${size}px`,
+          width: `${size - 6}px`,
+          height: `${size - 6}px`,
+          left: checked ? `${size + 2}px` : '2px',
+          background: checked ? 'transparent' : 'linear-gradient(40deg, #ff0080, #ff8c00 70%)',
+          boxShadow: checked ? 'inset -3px -3px 5px -2px #8983f7,inset -4px -4px 0px 0px #a3daff' : '0 0 5px #ff0080',
+          filter: env.followSystem ? 'grayscale(1)' : checked ? 'drop-shadow(0 0 2px #8983f7)' : 'none',
         }"
-      >
-        <span
-          class="bullet"
-          :style="{
-            width: `${size - 6}px`,
-            height: `${size - 6}px`,
-            left: checked ? `${size + 2}px` : '2px',
-            background: checked ? 'transparent' : 'linear-gradient(40deg, #ff0080, #ff8c00 70%)',
-            boxShadow: checked ? 'inset -3px -3px 5px -2px #8983f7,inset -4px -4px 0px 0px #a3daff' : '0 0 5px #ff0080',
-            filter: followSystem ? 'grayscale(1)' : checked ? 'drop-shadow(0 0 2px #8983f7)' : 'none',
-          }"
-        ></span
-      ></Button>
-      <!-- <template #overlay>
+      ></span
+    ></Button>
+    <!-- <template #overlay>
           <Menu>
             <MenuItem key="zh-CN"> <img src="@assets/images/locale/zh-cn.svg" class="loclae-icon" alt="zh-CN" /> 简体中文 </MenuItem>
             <MenuItem key="en-US"> <img src="@assets/images/locale/en-us.svg" class="loclae-icon" alt="en-US" /> English </MenuItem>
@@ -89,8 +67,8 @@ const checked = computed(() => {
           </Menu>
         </template>
       </Dropdown> -->
-    </ConfigProvider></span
-  >
+    <!-- </ConfigProvider> -->
+  </span>
 </template>
 
 <style lang="less" scoped>

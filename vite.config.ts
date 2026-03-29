@@ -34,7 +34,7 @@ export default defineConfig({
       { find: '@core', replacement: path.resolve(__dirname, 'src/core') },
       { find: '@utils', replacement: path.resolve(__dirname, 'src/utils') },
       { find: '@views', replacement: path.resolve(__dirname, 'src/views') },
-      { find: '@', replacement: path.resolve(__dirname, 'src') },
+      { find: '@store', replacement: path.resolve(__dirname, 'src/store') },
     ],
   },
 });

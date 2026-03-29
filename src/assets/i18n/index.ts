@@ -36,4 +36,5 @@ export default createI18n({
   locale: localStorage.getItem('locale') ?? 'zh-CN',
   fallbackLocale: 'zh-CN',
   messages,
+  missingWarn: false,
 });
