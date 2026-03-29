@@ -1,8 +1,11 @@
 <script setup lang="ts">
+import type { LocaleKeys } from '@shared/types';
+import { useHeaderStore } from '@store';
 import { Button, Dropdown, Menu, MenuItem } from 'ant-design-vue';
 import { computed, ref } from 'vue';
-import { useI18n } from 'vue-i18n';
-const { locale } = useI18n();
+
+const root = document.querySelector(':root') as HTMLHtmlElement;
+const header = useHeaderStore();
 
 const langList = [
   { key: 'zh-CN', icon: new URL('../assets/images/locale/zh-cn.svg', import.meta.url).href, label: '简体中文' },
@@ -12,24 +15,21 @@ const langList = [
   { key: 'es-ES', icon: new URL('../assets/images/locale/es-es.svg', import.meta.url).href, label: 'Español' },
   { key: 'ar-EG', icon: new URL('../assets/images/locale/ar-eg.svg', import.meta.url).href, label: 'العربي' },
 ];
-const lang = ref([localStorage.getItem('locale') ?? 'zh-CN']);
+const lang = ref([header.locale ?? 'zh-CN']);
 
 const currLangItem = computed(() => {
   return langList.find(x => x.key === lang.value[0]);
 });
 
-const root = document.querySelector(':root') as HTMLHtmlElement;
 const handleMenuClick = (e: any) => {
-  const localeKey = e.key as string;
-  locale.value = localeKey;
-  localStorage.setItem('locale', localeKey);
+  const localeKey = e.key as LocaleKeys;
+  header.locale = localeKey;
 
   if (root) {
     root.setAttribute('lang', localeKey);
     root.style.direction = currLangItem.value?.key === 'ar-EG' ? 'rtl' : '';
   }
 };
-handleMenuClick({ key: lang.value[0] });
 </script>
 
 <template>
@@ -50,6 +50,7 @@ handleMenuClick({ key: lang.value[0] });
 <style lang="less" scoped>
 .locale-host {
   display: flex;
+  width: 130px;
   align-items: center;
 }
 .locale-icon {

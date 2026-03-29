@@ -3,17 +3,47 @@ import { useAsideStore, useEnvStore } from '@store';
 import { ConfigProvider, Menu } from 'ant-design-vue';
 import type { SelectEventHandler } from 'ant-design-vue/es/menu/src/interface';
 import { computed, inject, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import router from '../routes';
 import SubMenu from './SubMenu.vue';
 
 const root = document.documentElement;
 const colorPrimary = inject('colorPrimary', '#41b883');
-
+const { t } = useI18n();
 const env = useEnvStore();
 const aside = useAsideStore();
 
+const selectedKeys = computed(() => (aside.selectedMenuKey?.length ? [aside.selectedMenuKey] : []));
+const menuList = computed(() => {
+  if (env.isMfe) {
+    return aside.menuItems;
+  } else {
+    return [
+      {
+        key: 'Overview',
+        label: t('总览'),
+        path: '/overview',
+      },
+      {
+        key: 'Document',
+        label: t('文档'),
+        path: '/document',
+      },
+      {
+        key: 'About',
+        label: t('关于'),
+        path: '/about',
+      },
+      {
+        key: 'Help',
+        label: t('帮助'),
+        path: '/help',
+      },
+    ];
+  }
+});
 watch(
-  () => aside.visible !== false && aside.menuItems.length,
+  () => aside.visible !== false && menuList.value.length,
   v => {
     if (v) {
       root.removeAttribute('no-aside');
@@ -23,12 +53,14 @@ watch(
   },
   { immediate: true },
 );
-
-const selectedKeys = computed(() => (aside.selectedMenuKey?.length ? [aside.selectedMenuKey] : []));
 const handleMenuClick: SelectEventHandler = e => {
-  const item = aside.menuItems.find(x => x.key === e.key);
-  aside.toggleMenuKey(e.key as string);
-  item?.path && router.push(item.path);
+  const item = menuList.value.find(x => x.key === e.key);
+  aside.selectedMenuKey = item?.key!;
+  if (item?.onClick) {
+    item?.onClick(item);
+  } else if (item?.path) {
+    router.push(item.path);
+  }
 };
 </script>
 
@@ -46,6 +78,7 @@ const handleMenuClick: SelectEventHandler = e => {
       },
       algorithm: env.algorithm,
     }"
+    :prefixCls="'cf'"
   >
     <Menu
       style="width: 256px"
@@ -57,12 +90,12 @@ const handleMenuClick: SelectEventHandler = e => {
       @select="handleMenuClick"
       v-if="aside.visible !== false"
     >
-      <SubMenu v-for="item in aside.menuItems" :key="item.key" :menuItem="item" />
+      <SubMenu v-for="item in menuList" :key="item.key" :menuItem="item" />
     </Menu>
   </ConfigProvider>
 </template>
 <style lang="less" scoped>
-.ant-menu {
+.cf-menu {
   position: fixed;
   inset-inline-start: 0;
   top: 72px;

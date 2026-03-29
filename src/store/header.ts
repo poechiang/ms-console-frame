@@ -1,77 +1,44 @@
-import type { HeaderMenuItem, LocaleKeys, MacroService, UseHeaderStore } from '@shared/types';
+import type { HeaderMenuItem, LocaleKeys, MacroService } from '@shared/types';
 import { defineStore } from 'pinia';
-import { ref } from 'vue';
+import { computed, ref, watch } from 'vue';
+import { useI18n } from 'vue-i18n';
 import { useEnvStore } from './env';
+import { useEventStore } from './event';
 
-export const useHeaderStore = defineStore<string, UseHeaderStore>(
+export const useHeaderStore = defineStore(
   'header',
   () => {
-    const envStore = useEnvStore();
-    const menuList = !envStore.isMfe
-      ? [
-          {
-            key: 'Document',
-            text: '文档',
-          },
-          {
-            key: 'About',
-            text: '关于',
-          },
-          {
-            key: 'Help',
-            text: '帮助',
-          },
-        ]
-      : [];
-
-    const title = ref('Console X');
-    const setTitle = (value: string) => {
-      title.value = value;
-    };
-
+    const events = useEventStore();
+    const env = useEnvStore();
+    const { locale } = useI18n();
+    const title = ref('Console Frame');
     const services = ref<MacroService[]>([]);
-    const addServices = (...values: MacroService[]) => {
-      const exists = services.value;
-      services.value = [...exists, ...values];
-    };
-    const resetServices = (...values: MacroService[]) => {
-      services.value = values;
-    };
-
-    const menuItems = ref<HeaderMenuItem[]>(menuList);
-    const addMenuItems = (...values: HeaderMenuItem[]) => {
-      const exists = menuItems.value;
-      menuItems.value = [...exists, ...values];
-    };
-    const resetMenuItems = (...values: HeaderMenuItem[]) => {
-      menuItems.value = values;
-    };
-
+    const menuItems = ref<HeaderMenuItem[]>([]);
     const selectedMenuKey = ref<string>('');
-    const toggleMenuKey = (value: string) => {
-      console.log(`[HEADER] toggleMenuKey to ${value}`);
-      selectedMenuKey.value = value;
-    };
+    const localeKey = ref<LocaleKeys>('zh-CN');
 
-    const locale = ref<LocaleKeys>('zh-CN');
-    const setLocale = (value: LocaleKeys) => {
-      locale.value = value;
-    };
+    watch(selectedMenuKey, key => {
+      console.log(`[HEADER] toggle menu key to ${key}`);
+      events.emit('menu:change', key, 'header');
+    });
+    watch(localeKey, key => {
+      locale.value = key;
+      console.log(`[HEADER] toggle locale key to ${key}`);
+      events.emit('locale:change', key);
+    });
 
     return {
       title,
-      setTitle,
       services,
-      addServices,
-      resetServices,
       menuItems,
-      addMenuItems,
-      resetMenuItems,
       selectedMenuKey,
-      toggleMenuKey,
-      locale,
-      setLocale,
+      locale: localeKey,
+      theme: computed(() => env.currentTheme),
     };
   },
-  { persist: true },
+  {
+    persist: {
+      pick: ['selectedMenuKey', 'locale'],
+    },
+  },
 );

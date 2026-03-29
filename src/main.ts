@@ -1,11 +1,13 @@
 import FrameAside from '@components/FrameAside.vue';
 import FrameHeader from '@components/FrameHeader.vue';
 import pinia, { useAsideStore, useHeaderStore } from '@store';
+import { useEventStore } from '@store/event';
 import { createApp } from 'vue';
 import App from './App.vue';
 import i18n from './assets/i18n';
 import { getService } from './core/services';
 import router from './routes';
+import type { CfExposes } from './shared-types';
 import './style.less';
 /**
  * 挂载函数：供基座调用
@@ -55,8 +57,10 @@ if (headerAppRef) {
 
 export { i18n };
 
+export const events = useEventStore(pinia);
+
 const headerStore = useHeaderStore(pinia);
-export const header = {
+export const header: CfExposes['header'] = {
   unmount: () => headerAppRef && unmount(headerAppRef),
   store: headerStore,
 };
@@ -67,11 +71,16 @@ if (asideAppRef) {
 }
 
 const asideStore = useAsideStore(pinia);
-export const aside = {
+export const aside: CfExposes['aside'] = {
   unmount: () => asideAppRef && unmount(asideAppRef),
   store: asideStore,
 };
 
+window.getConsoleService = () => ({
+  header,
+  aside,
+  events,
+});
 export * from '@hooks/useNavigator';
 if (!window.__FRAME_IN_MFE__) {
   const app = createAppCore(App);
