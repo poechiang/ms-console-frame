@@ -6,16 +6,16 @@ export const useAsideStore = defineStore(
   () => {
     const menuItems = ref<AsideMenuItem[]>([]);
 
-    const selectedMenuKey = ref<string>('');
+    const selectedMenuKeys = ref<string[]>([]);
 
     const visible = ref(true);
 
-    watch([selectedMenuKey], ([key]) => {
-      console.log(`[ASIDE] toggleMenuKey to ${key}`);
+    watch([selectedMenuKeys], ([keys]) => {
+      console.log(`[ASIDE] toggleMenuKeys to ${keys.join(', ')}`);
     });
     return {
       menuItems,
-      selectedMenuKey,
+      selectedMenuKeys,
       visible,
     };
   },

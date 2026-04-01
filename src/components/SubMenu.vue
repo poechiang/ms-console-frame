@@ -2,12 +2,12 @@
 import { Menu, MenuItem } from 'ant-design-vue';
 const SubMenuItem = Menu.SubMenu;
 
-defineProps<{ menuItem: any }>();
+const props = defineProps<{ menuItem: any }>();
 </script>
 
 <template>
   <!-- 如果有子路由，渲染为 sub-menu -->
-  <SubMenuItem :title="menuItem.label" v-if="menuItem.children?.length > 0" :key="menuItem.key + '-sub'">
+  <SubMenuItem :title="menuItem.label" v-if="menuItem.children?.length > 0" :key="menuItem.key">
     <template #icon>
       <img :src="menuItem.icon" alt="" v-if="menuItem.icon" />
     </template>

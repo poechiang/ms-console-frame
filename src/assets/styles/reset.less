@@ -1,8 +1,10 @@
 * {
-  padding: 0;
   box-sizing: border-box;
 }
-:not(p, ul) {
+:not(ul, ol, dl) {
+  padding: 0;
+}
+:not(p, ul, ol, dl) {
   margin: 0;
 }
 :root {
@@ -10,6 +12,8 @@
     margin: 0;
     margin-block-start: 48px;
     margin-inline-start: 256px;
+    width: calc(100vw - 256px);
+    height: auto;
   }
 
   &[no-aside] {
