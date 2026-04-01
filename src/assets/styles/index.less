@@ -20,28 +20,34 @@
   }
   color-scheme: light dark;
   @darkBackground: #000000;
+  @darkBackContainer: #1a1a1a;
   @darkTextBase: #ffffff;
   @lightBackground: #f5f5f5;
+  @lightBackContainer: #ffffff;
   @lightTextBase: #3d495d;
   &[theme-light] {
     --color-background: @lightBackground;
+    --color-back-container: @lightBackContainer;
     --color-text-base: @lightTextBase;
   }
 
   &[theme-dark] {
     --color-background: @darkBackground;
+    --color-back-container: @darkBackContainer;
     --color-text-base: @darkTextBase;
   }
 
   @media (prefers-color-scheme: light) {
     &:not([theme-dark]) {
       --color-background: @lightBackground;
+      --color-back-container: @lightBackContainer;
       --color-text-base: @lightTextBase;
     }
   }
   @media (prefers-color-scheme: dark) {
     &:not([theme-light]) {
       --color-background: @darkBackground;
+      --color-back-container: @darkBackContainer;
       --color-text-base: @darkTextBase;
     }
   }

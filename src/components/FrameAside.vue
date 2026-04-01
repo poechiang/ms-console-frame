@@ -1,6 +1,7 @@
 <script setup lang="ts">
 import { useAsideStore, useEnvStore } from '@store';
 import { ConfigProvider, Menu } from 'ant-design-vue';
+import type { Key } from 'ant-design-vue/es/_util/type';
 import type { SelectEventHandler } from 'ant-design-vue/es/menu/src/interface';
 import { computed, inject, watch } from 'vue';
 import { useI18n } from 'vue-i18n';
@@ -13,7 +14,14 @@ const { t } = useI18n();
 const env = useEnvStore();
 const aside = useAsideStore();
 
-const selectedKeys = computed(() => (aside.selectedMenuKey?.length ? [aside.selectedMenuKey] : []));
+const selectedKeys = computed(() => {
+  const keys = aside.selectedMenuKeys ?? [];
+  return [keys[keys.length - 1]].filter(Boolean) as string[];
+});
+const openKeys = computed(() => {
+  const keys = aside.selectedMenuKeys ?? [];
+  return keys.slice(0, keys.length - 1) as string[];
+});
 const menuList = computed(() => {
   if (env.isMfe) {
     return aside.menuItems;
@@ -53,13 +61,23 @@ watch(
   },
   { immediate: true },
 );
+
 const handleMenuClick: SelectEventHandler = e => {
-  const item = menuList.value.find(x => x.key === e.key);
-  aside.selectedMenuKey = item?.key!;
-  if (item?.onClick) {
-    item?.onClick(item);
-  } else if (item?.path) {
-    router.push(item.path);
+  let list = menuList.value;
+  let item: any;
+  e.keyPath?.forEach((key: Key, _, __) => {
+    item = list.find(x => x.key === key);
+    if (item?.children) {
+      list = item.children;
+    }
+  });
+  if (item) {
+    aside.selectedMenuKeys = e.keyPath as string[];
+    if (item.onClick) {
+      item.onClick(item);
+    } else if (item.path) {
+      router.push(item.path);
+    }
   }
 };
 </script>
@@ -74,6 +92,9 @@ const handleMenuClick: SelectEventHandler = e => {
           colorFillQuaternary: 'transparent',
           colorItemBg: 'transparent',
           colorItemBgSelected: 'transparent',
+          colorSubItemBg: 'transparent',
+          colorItemTextSelected: colorPrimary,
+          colorBorderBg: 'red',
         },
       },
       algorithm: env.algorithm,
@@ -84,6 +105,7 @@ const handleMenuClick: SelectEventHandler = e => {
       style="width: 256px"
       mode="inline"
       :selectedKeys="selectedKeys"
+      :openKeys="openKeys"
       :selectable="true"
       :multiple="false"
       :theme="env.currentTheme"
@@ -99,5 +121,15 @@ const handleMenuClick: SelectEventHandler = e => {
   position: fixed;
   inset-inline-start: 0;
   top: 72px;
+  /deep/ .cf-menu-item-selected::after {
+    border: 3px solid;
+    transform: none;
+    width: 6px;
+    height: 6px;
+    border-radius: 50%;
+    left: 0;
+    top: 50%;
+    transform: translate(10px, -3px);
+  }
 }
 </style>
