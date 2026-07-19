@@ -1,0 +1,18 @@
+.cfMenu {
+  position: fixed;
+  inset-inline-start: 0;
+  top: 72px;
+
+  :global(.cf-menu-item-selected::before) {
+    content: "";
+    position: absolute;
+    border: 3px solid;
+    border-radius: 50%;
+    left: 0;
+    top: 50%;
+    transform: translate(10px, -50%);
+  }
+  :global(.cf-menu-item-selected::after) {
+    display: none !important;
+  }
+}

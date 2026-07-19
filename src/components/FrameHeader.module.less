@@ -1,0 +1,98 @@
+.webLogo,
+.webTitle {
+  position: fixed;
+  font-size: 32px;
+  z-index: 1003;
+  font-weight: normal;
+}
+
+.webLogo {
+  cursor: pointer;
+  top: 8px;
+  left: 24px;
+  line-height: 0;
+}
+
+.webTitle {
+  margin-block: 0;
+  top: 0;
+  left: 56px;
+  line-height: 48px;
+}
+
+.tag {
+  position: absolute;
+  font-size: 12px;
+  padding: 2px 4px;
+  border-radius: 4px;
+  line-height: 16px;
+  inset-inline-start: calc(100% + 8px);
+  top: 8px;
+  white-space: nowrap;
+}
+
+.headerWrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  right: 0;
+  z-index: 1001;
+  gap: 12px;
+  padding: 0 24px;
+  line-height: 48px;
+  height: 48px;
+
+  &.scrolled {
+    box-shadow: 0 0 5px color-mix(in srgb, #000000, transparent 90%);
+
+    &:before {
+      position: absolute;
+      display: block;
+      content: "";
+      z-index: 0;
+      backdrop-filter: blur(13px);
+      background-color: color-mix(in srgb, var(--color-background), transparent 95%);
+      left: 0;
+      top: 0;
+      width: 100%;
+      height: 100%;
+    }
+  }
+}
+
+.hdMenuItem {
+  position: relative;
+
+  .bullet {
+    position: absolute;
+    height: 4px;
+    border-bottom: 4px solid;
+    border-radius: 2px;
+    left: 50%;
+    bottom: 0;
+    width: 0;
+    transition:
+      width 0.2s cubic-bezier(1, 1.61, 0.58, 1),
+      left 0.2s cubic-bezier(1, 1.64, 0.58, 1);
+  }
+
+  &.active .bullet {
+    width: 90%;
+    left: 5%;
+  }
+
+  &:focus-visible {
+    outline: none;
+  }
+}
+
+.localeHost {
+  display: flex;
+  align-items: center;
+}
+
+.localeIcon {
+  width: 1.3em;
+  height: 1.3em;
+  margin-inline-end: 0.5em;
+}

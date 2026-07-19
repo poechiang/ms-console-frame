@@ -1,9 +1,11 @@
-@import url('./assets/styles/index.less');
-
+@import url("./assets/styles/index.less");
+body::before {
+  display: block;
+  content: "";
+  height: 1px;
+  margin-top: -1px;
+}
 #app {
   display: block;
-  max-width: 1280px;
-  margin: 0 auto;
-  padding: 2rem;
-  text-align: center;
+  margin: 2rem;
 }

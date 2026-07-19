@@ -1,0 +1,89 @@
+.themeSwitchWrapper {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+}
+
+.themeSwitchHost {
+  position: relative;
+}
+
+.bullet {
+  position: absolute;
+  box-sizing: border-box;
+  border-radius: 50%;
+  transition: all 0.4s;
+  top: 2px;
+}
+.iconWrap {
+  color: var(--color-primary);
+
+  :global(svg) {
+    display: block;
+    width: 1em;
+    height: 1em;
+  }
+}
+.colorJelly {
+  display: block;
+  width: 40px;
+  height: 22px;
+  margin-inline-end: 4px;
+  border-radius: 3px;
+  cursor: pointer;
+  position: relative;
+  overflow: hidden;
+  border: 1px solid rgba(255, 255, 255, 0.2);
+
+  &::before {
+    content: "";
+    position: absolute;
+    top: 1px;
+    left: 1px;
+    width: 45%;
+    height: 40%;
+    background: radial-gradient(ellipse at 30% 30%, rgba(255, 255, 255, 0.8), rgba(255, 255, 255, 0) 70%);
+    border-radius: 3px 0 0 0;
+    pointer-events: none;
+  }
+
+  &::after {
+    content: "";
+    position: absolute;
+    bottom: 1px;
+    right: 1px;
+    width: 45%;
+    height: 40%;
+    background: radial-gradient(ellipse at 70% 70%, rgba(255, 255, 255, 0.2), rgba(255, 255, 255, 0) 70%);
+    border-radius: 0 0 3px 0;
+    pointer-events: none;
+  }
+
+  &:hover {
+    animation: jelly 0.8s ease;
+  }
+}
+
+@keyframes jelly {
+  0% {
+    transform: scale3d(1, 1, 1);
+  }
+  30% {
+    transform: scale3d(0.75, 1.25, 1);
+  }
+  40% {
+    transform: scale3d(1.25, 0.75, 1);
+  }
+  50% {
+    transform: scale3d(0.85, 1.15, 1);
+  }
+  65% {
+    transform: scale3d(1.05, 0.95, 1);
+  }
+  75% {
+    transform: scale3d(0.95, 1.05, 1);
+  }
+  100% {
+    transform: scale3d(1, 1, 1);
+  }
+}

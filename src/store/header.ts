@@ -34,6 +34,7 @@ export const useHeaderStore = defineStore(
       selectedMenuKey,
       locale: localeKey,
       theme: computed(() => env.currentTheme),
+      coloring: computed(() => env.coloring),
     };
   },
   {

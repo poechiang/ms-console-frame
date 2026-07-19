@@ -1,8 +1,13 @@
+declare module "*.module.less" {
+  const classes: { readonly [key: string]: string }
+  export default classes
+}
+
 declare global {
   interface Window {
-    __FRAME_IN_MFE__: boolean;
-    __MODULE_IN_MFE__: boolean;
-    getConsoleService: (name: ServiceKey) => any;
+    __FRAME_IN_MFE__: boolean
+    __MODULE_IN_MFE__: boolean
+    getConsoleService: (name: ServiceKey) => any
   }
 }
-export {};
+export {}

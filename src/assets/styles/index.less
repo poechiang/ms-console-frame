@@ -12,7 +12,7 @@
   background-color: var(--color-background);
   color: var(--color-text-base);
 
-  &[lang='ar-EG'] {
+  &[lang="ar-EG"] {
     line-height: 1.6;
     font-size: 18px;
   }
@@ -51,4 +51,9 @@
       --color-text-base: @darkTextBase;
     }
   }
+}
+
+frame-header,
+frame-aside {
+  display: contents;
 }
